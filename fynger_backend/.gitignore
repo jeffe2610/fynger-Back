@@ -1,0 +1,32 @@
+# Dependências
+/node_modules
+
+# Arquivos de ambiente
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs
+*.log
+
+# Arquivos de build temporários
+dist
+build
+.tmp
+
+# Cache
+.cache
+.DS_Store
+
+# Sistema operacional
+Thumbs.db
+
+# Editor
+.vscode
+.idea
+
+# Arquivos do Supabase (caso você tenha clonado o projeto local)
+.supabase
