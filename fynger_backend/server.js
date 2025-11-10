@@ -14,10 +14,9 @@ const fimMes= format(endOfMonth(new Date()),"yyyy-MM-dd")
 
 
 const app = express();
-app.use(cors({ origin: [
-  "http://localhost:5173",
+app.use(cors({ origin:
   "https://fynger-front.vercel.app" 
-  ],
+  ,
   credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
