@@ -14,9 +14,10 @@ const fimMes= format(endOfMonth(new Date()),"yyyy-MM-dd")
 
 
 const app = express();
-app.use(cors({ origin:
-  "https://fynger-front.vercel.app" 
-  ,
+app.use(cors({ origin: [
+  "http://localhost:5173",
+  "https://fynger-front.vercel.app",
+],
   credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
@@ -234,6 +235,54 @@ app.get("/grupo",verificarSessao,async(req, res)=>{
 
 
 
+app.get("/atualizar-dados",verificarSessao, async(req, res)=>{
+  
+  const {data: userData, error: userError} = await supabase
+  .from("usuarios")
+  .select(`
+    nome,
+    email,
+    telefone,
+    grupo: grupo_id(nome)`
+  )
+  .eq("id", req.user.id);
+
+  if(userError) {return res.status(400).json(error.message);}
+
+  const {data: grupoData, error: grupoError} = await supabase
+  .from("usuarios")
+  .select(`
+    id,
+    nome,
+    email`
+  )
+  .eq("grupo_id", req.user.grupo_id);
+
+  if(grupoError) {return res.status(400).json(error.message);}
+  
+  const {data:catData, error:catError} = await supabase
+  .from('categorias')
+  .select(`id, nome,tipo`)
+  .eq('grupo_id',req.user.grupo_id)
+
+  if (catError) {return res.status(400).json(catError.message);}
+   
+  
+  const dados = {
+    nome: userData[0].nome,
+    email: userData[0].email,
+    telefone: userData[0].telefone,
+    nomeGrupo: userData[0].grupo.nome,
+    categorias: catData,
+    membros: grupoData
+  }
+  
+  console.log(dados)
+  return res.json(dados)
+})
+
+
+
 // 🔹 Rota simples pra testar se o servidor está rodando
 app.get("/", (req, res) => {
   res.send("Servidor está rodando!");
@@ -247,3 +296,6 @@ app.listen(PORT, () => {
   console.log(`✅ Backend rodando na porta ${PORT}`, mes);
   
 });
+
+
+
