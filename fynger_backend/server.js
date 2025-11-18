@@ -376,7 +376,7 @@ app.put('/atualiza-avatar', upload.single("avatar"), verificarSessao, async (req
 
     if (errorUrl) throw errorUrl
 
-    const publicUrl = `${dataUrl.publicUrl}?t=${Date.now()}`;
+    const publicUrl = dataUrl.publicUrl
 
     
     
@@ -405,7 +405,7 @@ const  {data , error} = await supabase
 .from("grupo")
 .update({"nome":nomeGrupo})
 .eq('id',req.user.grupo_id)
-.select()
+
 if (error) return res.status(400).json(error.message)
 
  return res.json(data)
