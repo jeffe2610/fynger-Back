@@ -6,6 +6,7 @@ import { verificarSessao } from "./midleware/auth.js";
 import {format, startOfMonth, endOfMonth} from 'date-fns'
 
 import multer from "multer";
+import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient.js";
 
 const mes = format(new Date(), 'yyyy-MM')
 const inicioMes= format(startOfMonth(new Date()),"yyyy-MM-dd")
@@ -443,12 +444,22 @@ app.delete("/del-categoria", async (req,res) => {
   .eq('id', id )
   .select()
   if(error)res.status(400).json(error.message)
-    console.log("Resultado Supabase:", data, error)
+    
   return res.json(data)
 
 })
 
+app.delete("/del-transacao" ,async (req,res) => {
+  const {id} = req.body;
+  const{ data, error } = await supabase
+  .from("transacoes")
+  .delete()
+  .eq('id', id)
 
+  if (error) res.status(400).json(error.message)
+  return res.json(data)
+  
+})
 
 
 
