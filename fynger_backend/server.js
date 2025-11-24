@@ -115,7 +115,8 @@ app.get("/session", verificarSessao ,async (req, res) => {
     nome: req.user.nome,
     message: "sessao Valida",
     grupo_id: req.user.grupo_id,
-    perfil: req.user.perfil
+    perfil: req.user.perfil,
+    avatar: req.user.avatar
   })
 
   
@@ -413,9 +414,39 @@ if (error) return res.status(400).json(error.message)
 })
 
 
+app.post("/add-categoria", verificarSessao ,async (req,res) => {
+  const{nomeCategoria, tipoCategoria} = req.body
+  
+  const{data ,error} = await supabase
+  .from('categorias')
+  .insert([{
+    nome: nomeCategoria,
+    tipo: tipoCategoria,
+    grupo_id: req.user.grupo_id
+  }])
+  .select()
 
+  if(error){return res.status(400).json(error.message)}
+   return res.json(data)
+})
 
+app.delete("/del-categoria", async (req,res) => {
+  console.log("BODY RECEBIDO:", req.body);
 
+  const { id } = req.body;
+  console.log("ID:", id);
+
+   
+  const {data ,error} = await supabase
+  .from("categorias")
+  .delete()
+  .eq('id', id )
+  .select()
+  if(error)res.status(400).json(error.message)
+    console.log("Resultado Supabase:", data, error)
+  return res.json(data)
+
+})
 
 
 

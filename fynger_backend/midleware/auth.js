@@ -21,7 +21,7 @@ export async function verificarSessao(req, res, next) {
     // 🔹 3. Busca os dados extras na tabela 'usuarios'
     const { data: usuario, error: usuarioError } = await supabase
       .from("usuarios")
-      .select("nome, grupo_id, perfil, email")
+      .select("nome, grupo_id, perfil, email, avatar")
       .eq("id", userId)
       .single();
 
@@ -35,7 +35,8 @@ export async function verificarSessao(req, res, next) {
       nome: usuario.nome,
       grupo_id: usuario.grupo_id,
       perfil: usuario.perfil,
-      email: usuario.email
+      email: usuario.email,
+      avatar: usuario.avatar
     };
 
     // 🔹 5. Continua pra rota
@@ -44,5 +45,5 @@ export async function verificarSessao(req, res, next) {
     console.error("Erro no middleware de sessão:", err);
     return res.status(500).json({ error: "Erro interno no servidor" });
   }
-  console.log(req.user)
+  
 }
