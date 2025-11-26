@@ -117,7 +117,8 @@ app.get("/session", verificarSessao ,async (req, res) => {
     message: "sessao Valida",
     grupo_id: req.user.grupo_id,
     perfil: req.user.perfil,
-    avatar: req.user.avatar
+    avatar: req.user.avatar,
+    nomeGrupo: req.user.nomeGrupo
   })
 
   
@@ -165,7 +166,7 @@ app.get("/transacao",verificarSessao,async (req, res)=>{
       tipo,
       valor,
       categoria_id,
-      categorias ( nome ),
+      categorias ( nome, tipo ),
       data,
       usuarios(nome)
     `)
@@ -182,6 +183,7 @@ app.get("/transacao",verificarSessao,async (req, res)=>{
     nome: item.tipo,
     valor: item.valor,
     categoria:item.categorias?.nome || "sem categoria",
+    tipo: item.categorias?.tipo,
     data: item.data,
     membro: item.usuarios?.nome 
   }))
@@ -231,7 +233,7 @@ app.get("/grupo",verificarSessao,async(req, res)=>{
   .from('resumo_usuarios_mensal')
   .select('*')
   .eq("grupo_id", req.user.grupo_id)
-  .eq("mes", mes)
+  
 
   if(error){res.status(400).json(error.message)}
     return res.json(data) 
@@ -261,7 +263,8 @@ app.get("/atualizar-dados",verificarSessao, async(req, res)=>{
   .select(`
     id,
     nome,
-    email`
+    email,
+    avatar`
   )
   .eq("grupo_id", req.user.grupo_id);
 
