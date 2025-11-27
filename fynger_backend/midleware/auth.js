@@ -21,7 +21,7 @@ export async function verificarSessao(req, res, next) {
     // 🔹 3. Busca os dados extras na tabela 'usuarios'
     const { data: usuario, error: usuarioError } = await supabase
       .from("usuarios")
-      .select("nome, grupo_id, perfil, email, avatar")
+      .select("nome, grupo_id, perfil, email, avatar, grupo(nome)")
       .eq("id", userId)
       .single();
 
@@ -36,9 +36,10 @@ export async function verificarSessao(req, res, next) {
       grupo_id: usuario.grupo_id,
       perfil: usuario.perfil,
       email: usuario.email,
-      avatar: usuario.avatar
+      avatar: usuario.avatar,
+      nomeGrupo: usuario.grupo.nome
     };
-
+    console.log(req.user)
     // 🔹 5. Continua pra rota
     next();
   } catch (err) {
