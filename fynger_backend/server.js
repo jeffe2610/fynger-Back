@@ -117,7 +117,8 @@ app.get("/session", verificarSessao ,async (req, res) => {
     message: "sessao Valida",
     grupo_id: req.user.grupo_id,
     perfil: req.user.perfil,
-    avatar: req.user.avatar
+    avatar: req.user.avatar,
+    nomeGrupo:  req.user.nomeGrupo
   })
 
   
