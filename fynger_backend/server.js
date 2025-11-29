@@ -500,8 +500,9 @@ app.get("/", (req, res) => {
   res.send("Servidor está rodando!");
 });
 
+const PORT = process.env.PORT || 5000;
 
-
-app.listen(() => {
-  console.log(`✅ Backend rodando`, mes);
+app.listen(PORT, () => {
+  console.log(`✅ Backend rodando na porta ${PORT}`, mes);
+  
 });
