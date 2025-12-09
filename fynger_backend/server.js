@@ -23,6 +23,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+
 // Rota de login
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -48,7 +49,7 @@ app.post("/logout", (req, res) => {
 
 // Rota de cadastro
 app.post("/signup", async (req, res) => {
-  const { email, password, nome, tel } = req.body;
+  const { email, password, nome, tel, grupoId } = req.body;
 
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
@@ -58,20 +59,25 @@ app.post("/signup", async (req, res) => {
   if (authError) return res.status(400).json({ error: authError.message });
 
   const userId = authData.user.id;
+  let grupo = null
+  if(!grupoId){
 
-  const { data: dataGroup, error: errorGroup } = await supabase
-    .from("grupo")
-    .insert([
-      {
-        nome: `grupo do ${nome}`,
-        criado_por: userId,
-      },
-    ])
-    .select();
-
-  if (errorGroup) {
-    res.status(400).json({ error: errorGroup.message });
+    const { data: dataGroup, error: errorGroup } = await supabase
+      .from("grupo")
+      .insert([
+        {
+          nome: `grupo do ${nome}`,
+          criado_por: userId,
+        },
+      ])
+      .select();
+  
+    if (errorGroup) {
+      res.status(400).json({ error: errorGroup.message });}
+    
+    grupo = dataGroup
   }
+  
 
   const { data: userData, error: insertError } = await supabase
     .from("usuarios")
@@ -82,7 +88,7 @@ app.post("/signup", async (req, res) => {
         telefone: tel,
         perfil: "admin",
         id: userId,
-        grupo_id: dataGroup[0].id,
+        grupo_id: grupoId? grupoId : grupo[0].id,
       },
     ])
     .select();
@@ -91,7 +97,6 @@ app.post("/signup", async (req, res) => {
   return res.json({
     message: "cadastro efetuado com sucesso",
     user: authData,
-    group: dataGroup,
     cadastro: userData,
   });
 });
