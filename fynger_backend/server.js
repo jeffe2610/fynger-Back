@@ -168,43 +168,43 @@ app.post("/transacao", verificarSessao, async (req, res) => {
       return res.status(400).json({ error: recorrenciaError.message });
   }
 
-  //rota get  de todas as  transacoes
-
-  app.get("/transacao", verificarSessao, async (req, res) => {
-    const { data: transData, error: transError } = await supabase
-      .from("transacoes")
-      .select(
-        `
-        id,
-        tipo,
-        valor,
-        categoria_id,
-        categorias ( nome ),
-        data,
-        usuarios(nome)
-        `
-      )
-      .eq("grupo_id", req.user.grupo_id)
-      .gte("data", inicioMes)
-      .lte("data", fimMes);
-
-    if (transError) return res.status(400).json(transError.message);
-
-    const resultado = transData.map((item) => ({
-      id: item.id,
-      nome: item.tipo,
-      valor: item.valor,
-      categoria: item.categorias?.nome || "sem categoria",
-      data: item.data,
-      membro: item.usuarios?.nome,
-    }));
-
-    return res.json(resultado);
-  });
-
+  
   return res.json({ cadastro: transData[0] });
 });
 
+//rota get  de todas as  transacoes
+
+app.get("/transacao", verificarSessao, async (req, res) => {
+  const { data: transData, error: transError } = await supabase
+    .from("transacoes")
+    .select(
+      `
+      id,
+      tipo,
+      valor,
+      categoria_id,
+      categorias ( nome ),
+      data,
+      usuarios(nome)
+      `
+    )
+    .eq("grupo_id", req.user.grupo_id)
+    .gte("data", inicioMes)
+    .lte("data", fimMes);
+
+  if (transError) return res.status(400).json(transError.message);
+
+  const resultado = transData.map((item) => ({
+    id: item.id,
+    nome: item.tipo,
+    valor: item.valor,
+    categoria: item.categorias?.nome || "sem categoria",
+    data: item.data,
+    membro: item.usuarios?.nome,
+  }));
+
+  return res.json(resultado);
+});
 // informações para o grafico de gastos mensais por categoria
 app.get("/transacoes-grafico", verificarSessao, async (req, res) => {
   const { data: transData, error: transError } = await supabase
@@ -238,12 +238,13 @@ app.get("/transacoes-grafico", verificarSessao, async (req, res) => {
       acumulado[item.categoria] = 0;
     }
     acumulado[item.categoria] += item.valor;
+    console.log("acumulado",acumulado)
     return acumulado;
   }, {});
-
+  console.log("agrupado",agrupado)
   const respostaFinal = Object.entries(agrupado).map(([categoria, valor]) => ({
     categoria,
-    valor,
+    valor: Number(valor.toFixed(2)),
   }));
 
   return res.json(respostaFinal);
