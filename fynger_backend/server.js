@@ -66,7 +66,7 @@ app.post("/signup", async (req, res) => {
       .from("grupo")
       .insert([
         {
-          nome: `grupo do ${nome}`,
+          nome: `grupo de ${nome}`,
           criado_por: userId,
         },
       ])
@@ -238,10 +238,10 @@ app.get("/transacoes-grafico", verificarSessao, async (req, res) => {
       acumulado[item.categoria] = 0;
     }
     acumulado[item.categoria] += item.valor;
-    console.log("acumulado",acumulado)
+    
     return acumulado;
   }, {});
-  console.log("agrupado",agrupado)
+  
   const respostaFinal = Object.entries(agrupado).map(([categoria, valor]) => ({
     categoria,
     valor: Number(valor.toFixed(2)),
@@ -314,6 +314,7 @@ app.get("/atualizar-dados", verificarSessao, async (req, res) => {
     .from("usuarios")
     .select(
       `
+    avatar,
     id,
     nome,
     email`
@@ -323,7 +324,8 @@ app.get("/atualizar-dados", verificarSessao, async (req, res) => {
   if (grupoError) {
     return res.status(400).json(error.message);
   }
-
+  
+  
   const { data: catData, error: catError } = await supabase
     .from("categorias")
     .select(`id, nome,tipo`)
