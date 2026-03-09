@@ -11,9 +11,8 @@ export async function verificarSessao(req, res, next) {
     const token = authHeader.split(" ")[1];
 
     //  2. Usa o token para buscar o usuário logado no Supabase
-    const { data: authData, error: authError } = await supabase.auth.getUser(
-      token
-    );
+    const { data: authData, error: authError } =
+      await supabase.auth.getUser(token);
     if (authError || !authData?.user) {
       return res.status(401).json({ error: "Sessão inválida ou expirada" });
     }
@@ -23,7 +22,7 @@ export async function verificarSessao(req, res, next) {
     //  3. Busca os dados extras na tabela 'usuarios'
     const { data: usuario, error: usuarioError } = await supabase
       .from("usuarios")
-      .select("nome, grupo_id, perfil, email, avatar, grupo(nome)")
+      .select("nome, email, avatar")
       .eq("id", userId)
       .single();
 
@@ -35,11 +34,8 @@ export async function verificarSessao(req, res, next) {
     req.user = {
       id: userId,
       nome: usuario.nome,
-      grupo_id: usuario.grupo_id,
-      perfil: usuario.perfil,
-      email: usuario.email,
+
       avatar: usuario.avatar,
-      nomeGrupo: usuario.grupo.nome,
     };
 
     //  5. Continua pra rota
