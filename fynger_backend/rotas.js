@@ -531,33 +531,14 @@ app.get("/atualizar-dados", verificarSessao, async (req, res) => {
     avatar,
     nome,
     email,
-    telefone,
-    grupo_id,
-    grupo: grupo_id(nome)`,
+    telefone
+    `,
     )
     .eq("id", req.user.id);
   if (userError) {
     return res.status(400).json(error.message);
   }
 
-  let grupoData = null;
-  if (req.user.grupo_id) {
-    const { data, error } = await supabase
-      .from("usuarios")
-      .select(
-        `
-      avatar,
-      id,
-      nome,
-      email`,
-      )
-      .eq("grupo_id", req.user.grupo_id);
-
-    if (error) {
-      return res.status(400).json(error.message);
-    }
-    grupoData = data;
-  }
 
   const { data: catData, error: catError } = await supabase
     .from("categorias")
@@ -572,11 +553,9 @@ app.get("/atualizar-dados", verificarSessao, async (req, res) => {
     nome: userData[0]?.nome,
     email: userData[0]?.email,
     telefone: userData[0]?.telefone,
-    nomeGrupo: userData[0]?.grupo?.nome || "sem grupo",
     categorias: catData,
-    membros: grupoData || [],
     avatar: userData[0].avatar,
-    grupo_id: req.user.grupo_id || null,
+    
   };
 
   console.log("dados filtrados", dados);
